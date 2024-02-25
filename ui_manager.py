@@ -1,10 +1,28 @@
 import tkinter as tk
+import encoder
 
 def validate_entry_encode(text):
-    return text.isdigit() and len(text) <= 9 or text == ""
+    if not text:
+        return True
+    parts = text.split(', ')
+    if len(parts) > 9: 
+        return False
+    if not all((part.isdigit() and 0 <= int(part) <= 15) or not part for part in parts):
+        return False
+    return True
 
 def validate_entry_decode(text):
-    return text.isdigit() and len(text) <= 15 or text == ""
+    if not text:
+        return True
+    parts = text.split(', ')
+    if len(parts) > 15:  
+        return False
+    if not all((part.isdigit() and 0 <= int(part) <= 15) or not part for part in parts):
+        return False
+    return True
+
+def add_comma(event, entry):
+    entry.insert(tk.INSERT, ', ')
 
 
 def copy_result(ent_data_encode, ent_data_enter_decode):
@@ -13,11 +31,25 @@ def copy_result(ent_data_encode, ent_data_enter_decode):
     ent_data_enter_decode.delete(0, tk.END) 
     ent_data_enter_decode.insert(0, encoded_data)
 
-def show_result(ent_data):
-    ent_data.config(state="normal")  
-    ent_data.delete(0, tk.END)     
-    ent_data.insert(0, "42")        
-    ent_data.config(state="readonly") 
+def encode_data(ent_data_encoded, ent_data): 
+    
+    data_to_encode = ent_data.get()
+    data_to_encode_list = data_to_encode.split(', ')    
+    data_to_encode_list = [int(x) for x in data_to_encode_list]
+    encoded_data = encoder.rs_encode(data_to_encode_list) 
+    encoded_data_str = ', '.join(str(x) for x in encoded_data)
+
+    ent_data_encoded.config(state="normal")  
+    ent_data_encoded.delete(0, tk.END)     
+    ent_data_encoded.insert(0, encoded_data_str)        
+    ent_data_encoded.config(state="readonly") 
+
+def decode_data(ent_data_decoded, ent_data):
+    data_to_decode = ent_data.get()
+    ent_data_decoded.config(state="normal")  
+    ent_data_decoded.delete(0, tk.END)     
+    ent_data_decoded.insert(0, data_to_decode)        
+    ent_data_decoded.config(state="readonly") 
 
 def ui_config(root):
     root.title("Reed-Solomon (15,9) encoder and decoder")
@@ -37,10 +69,10 @@ def ui_config(root):
         frm_service.columnconfigure(i, weight=1, uniform='a')
         frm_service.rowconfigure(i, weight=1, uniform='a')
 
-    lbl_data_to_encode = tk.Label(frm_service, text="Enter data to encode (9 numbers):", bg="lightgray")  
+    lbl_data_to_encode = tk.Label(frm_service, text="Enter data to encode (9 numbers [0-15]):", bg="lightgray")  
     lbl_data_encoded = tk.Label(frm_service, text="Encoded data:", bg="lightgray")  
     
-    lbl_data_to_decode = tk.Label(frm_service, text="Enter data to decode (15 numbers):", bg="lightgray")  
+    lbl_data_to_decode = tk.Label(frm_service, text="Enter data to decode (15 numbers [0-15]):", bg="lightgray")  
     lbl_data_decoded = tk.Label(frm_service, text="Decoded data:", bg="lightgray")  
 
     ent_data_to_encode = tk.Entry(frm_service, validate="key", validatecommand=(frm_service.register(validate_entry_encode), "%P"))  
@@ -48,10 +80,14 @@ def ui_config(root):
 
     ent_data_to_decode = tk.Entry(frm_service, validate="key", validatecommand=(frm_service.register(validate_entry_decode), "%P"))  
     ent_data_decoded = tk.Entry(frm_service, state="readonly") 
+    
 
+    btn_data_encode = tk.Button(frm_service, text="Encode", command=lambda: encode_data(ent_data_encoded, ent_data_to_encode))
+    btn_data_decode = tk.Button(frm_service, text="Decode", command=lambda: decode_data(ent_data_decoded, ent_data_to_decode))
+    
+    ent_data_to_encode.bind('<KeyPress-space>', lambda event: add_comma(event, ent_data_to_encode))
+    ent_data_to_decode.bind('<KeyPress-space>', lambda event: add_comma(event, ent_data_to_decode))
 
-    btn_data_encode = tk.Button(frm_service, text="Encode", command=lambda: show_result(ent_data_encoded))
-    btn_data_decode = tk.Button(frm_service, text="Decode", command=lambda: show_result(ent_data_decoded))
     btn_data_copy_to_decode = tk.Button(frm_service, text="Copy to Decode", command=lambda: copy_result(ent_data_encoded,ent_data_to_decode))
 
     lbl_data_to_encode.grid(column=0, row=0, sticky="ew", padx=5, pady=5)
