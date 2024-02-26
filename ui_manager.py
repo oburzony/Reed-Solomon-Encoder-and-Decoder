@@ -25,7 +25,6 @@ def validate_entry_decode(text):
 def add_comma(event, entry):
     entry.insert(tk.INSERT, ', ')
 
-
 def copy_result(ent_data_encode, ent_data_enter_decode):
     encoded_data = ent_data_encode.get()
     ent_data_enter_decode.config(state="normal") 
@@ -93,8 +92,11 @@ def decode_data(ent_data_decoded, ent_data, txt_console):
     ent_data_decoded.insert(0, decoded_data_str)        
     ent_data_decoded.config(state="readonly") 
 
+def clear_data(ent_data):
+    ent_data.delete(0, tk.END)        
+
 def ui_config(root):
-    root.title("Reed-Solomon (15,9) encoder and decoder")
+    root.title("Reed-Solomon (15,9) encoder and \"simple\" decoder")
     window_width = 800
     window_height = 600
     screen_width = root.winfo_screenwidth()
@@ -109,6 +111,8 @@ def ui_config(root):
 
     frm_console = tk.Frame(root, bg="black")
     frm_console.pack(fill=tk.BOTH, expand=True, side=tk.LEFT)  
+    txt_console = tk.Text(frm_console, bg="black", fg="white")
+    txt_console.pack(fill=tk.BOTH, expand=True)
 
     for i in range(14):
         frm_service.rowconfigure(i, weight=1, uniform='a')
@@ -121,45 +125,39 @@ def ui_config(root):
     lbl_data_to_decode = tk.Label(frm_service, text="Enter data to decode (15 numbers [0-15]):", bg="lightgray")  
     lbl_data_decoded = tk.Label(frm_service, text="Decoded data:", bg="lightgray")  
 
-    ent_data_to_encode = tk.Entry(frm_service, validate="key", validatecommand=(frm_service.register(validate_entry_encode), "%P"))  
-    ent_data_encoded = tk.Entry(frm_service, state="readonly") 
-
+    ent_data_to_encode = tk.Entry(frm_service, validate="key", validatecommand=(frm_service.register(validate_entry_encode), "%P")) 
     ent_data_to_decode = tk.Entry(frm_service, validate="key", validatecommand=(frm_service.register(validate_entry_decode), "%P"))  
-    ent_data_decoded = tk.Entry(frm_service, state="readonly") 
-    
 
-    btn_data_encode = tk.Button(frm_service, text="Encode", command=lambda: encode_data(ent_data_encoded, ent_data_to_encode, txt_console))
-    btn_data_decode = tk.Button(frm_service, text="Decode", command=lambda: decode_data(ent_data_decoded, ent_data_to_decode, txt_console))
-    
     ent_data_to_encode.bind('<KeyPress-space>', lambda event: add_comma(event, ent_data_to_encode))
     ent_data_to_decode.bind('<KeyPress-space>', lambda event: add_comma(event, ent_data_to_decode))
 
-    btn_data_copy_to_decode = tk.Button(frm_service, text="Copy to Decode", command=lambda: copy_result(ent_data_encoded,ent_data_to_decode))
+    ent_data_encoded = tk.Entry(frm_service, state="readonly") 
+    ent_data_decoded = tk.Entry(frm_service, state="readonly") 
 
     btn_instruction = tk.Button(frm_service, text="Instruction")
-    btn_clear_encode = tk.Button(frm_service, text="Clear data to encode")
-    btn_clear_decode = tk.Button(frm_service, text="Clear data to decode")
+    btn_data_encode = tk.Button(frm_service, text="Encode", command=lambda: encode_data(ent_data_encoded, ent_data_to_encode, txt_console))
+    btn_data_decode = tk.Button(frm_service, text="Decode", command=lambda: decode_data(ent_data_decoded, ent_data_to_decode, txt_console))
+    btn_data_copy_to_decode = tk.Button(frm_service, text="Copy to Decode", command=lambda: copy_result(ent_data_encoded,ent_data_to_decode))
+    btn_clear_encode = tk.Button(frm_service, text="Clear data to encode", command=lambda:clear_data(ent_data_to_encode))
+    btn_clear_decode = tk.Button(frm_service, text="Clear data to decode", command=lambda:clear_data(ent_data_to_decode))
 
+    btn_instruction.grid(column=0, row=0, sticky="ew", padx=5, pady=5)
+    btn_data_encode.grid(column=0, row=1, sticky="ew", padx=5, pady=5)
+    btn_data_decode.grid(column=0, row=2, sticky="ew", padx=5, pady=5)
+    btn_data_copy_to_decode.grid(column=0, row=3, sticky="ew", padx=5, pady=5)
+    btn_clear_encode.grid(column=0, row=4, sticky="ew", padx=5, pady=5)
+    btn_clear_decode.grid(column=0, row=5, sticky="ew", padx=5, pady=5) 
 
     lbl_data_to_encode.grid(column=0, row=6, sticky="ew", padx=5, pady=5)
     ent_data_to_encode.grid(column=0, row=7, sticky="ew", padx=5, pady=5)
-    btn_data_encode.grid(column=0, row=1, sticky="ew", padx=5, pady=5)
 
     lbl_data_encoded.grid(column=0, row=8, sticky="ew", padx=5, pady=5)
     ent_data_encoded.grid(column=0, row=9, sticky="ew", padx=5, pady=5)
-    btn_data_copy_to_decode.grid(column=0, row=3, sticky="ew", padx=5, pady=5)
 
     lbl_data_to_decode.grid(column=0, row=10, sticky="ew", padx=5, pady=5)
     ent_data_to_decode.grid(column=0, row=11, sticky="ew", padx=5, pady=5)
-    btn_data_decode.grid(column=0, row=2, sticky="ew", padx=5, pady=5)
 
     lbl_data_decoded.grid(column=0, row=12, sticky="ew", padx=5, pady=5)
     ent_data_decoded.grid(column=0, row=13, sticky="ew", padx=5, pady=5)
 
-    btn_instruction.grid(column=0, row=0, sticky="ew", padx=5, pady=5)
-    btn_clear_encode.grid(column=0, row=4, sticky="ew", padx=5, pady=5)
-    btn_clear_decode.grid(column=0, row=5, sticky="ew", padx=5, pady=5) 
-
-    txt_console = tk.Text(frm_console, bg="black", fg="white")
-    txt_console.pack(fill=tk.BOTH, expand=True)
     
