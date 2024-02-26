@@ -56,13 +56,13 @@ def gf16_poly_divide(poly_1, poly_2):
     if len_generating_poly > len(poly_1):
         return  poly_1
    
-    found_first_nonzero = False
+    found_first_non_zero = False
 
     for element in remainder:
         if element != 0:
-            found_first_nonzero = True
+            found_first_non_zero = True
             
-        if found_first_nonzero:
+        if found_first_non_zero:
             len_poly_1 += 1
 
     if len_poly_1 < 7:
@@ -90,13 +90,13 @@ def gf16_poly_divide(poly_1, poly_2):
 
         len_poly_1 = 0 
 
-        found_first_nonzero = False
+        found_first_non_zero = False
 
         for element in remainder:
             if element != 0:
-                found_first_nonzero = True
+                found_first_non_zero = True
                 
-            if found_first_nonzero:
+            if found_first_non_zero:
                 len_poly_1 += 1
 
     remainder = remainder[9:]     

@@ -1,12 +1,12 @@
 from gf16_operations import generating_poly, gf16_poly_divide, add_arr
 
 # Function for Reed-Solomon decoding
-def rs_decode(encodedata):
+def rs_decode(encoded_data):
     # Splitting data into 15-element encoded blocks
     block_size = 15
-    blocks = [encodedata[i:i+block_size] for i in range(0, len(encodedata), block_size)]
+    blocks = [encoded_data[i:i+block_size] for i in range(0, len(encoded_data), block_size)]
 
-    num_blocks = (len(encodedata) - 1) // block_size + 1
+    num_blocks = (len(encoded_data) - 1) // block_size + 1
     
     raw_size = 9  # Size of raw data after decoding
     t = 3  # Number of errors expected to be corrected
