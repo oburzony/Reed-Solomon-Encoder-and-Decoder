@@ -35,17 +35,17 @@ def encode_data(ent_data_encoded, ent_data, txt_console):
     data_to_encode = ent_data.get()
 
     if not data_to_encode:
-        txt_console.insert(tk.END, "ERROR: Data to encode cannot be empty.\n")
+        txt_console.insert(tk.END, ">>> ERROR: Data to encode cannot be empty.\n")
         return
     
     data_to_encode_list = data_to_encode.split(', ')    
-    
+
     if len(data_to_encode_list) != 9:
-        txt_console.insert(tk.END, "ERROR: Data to encode must contain exactly 9 numbers separated by commas and space.\n")
+        txt_console.insert(tk.END, ">>> ERROR: Data to encode must contain exactly 9 numbers separated by commas and space.\n")
         return
     
     if not all(data.strip() for data in data_to_encode_list):
-        txt_console.insert(tk.END, "ERROR: Each number in the data to encode must be non-empty.\n")
+        txt_console.insert(tk.END, ">>> ERROR: Each number in the data to encode must be non-empty.\n")
         return
     
     data_to_encode_list = [int(x) for x in data_to_encode_list]
@@ -81,12 +81,16 @@ def ui_config(root):
     root.resizable(True, True)
 
     frm_service = tk.Frame(root, bg="lightgray", bd=2, relief=tk.RAISED)
-    frm_service.pack(fill=tk.X)
+    frm_service.pack(fill=tk.Y, side=tk.LEFT)
 
-    for i in range(3):
-        frm_service.columnconfigure(i, weight=1, uniform='a')
+    frm_console = tk.Frame(root, bg="black")
+    frm_console.pack(fill=tk.BOTH, expand=True, side=tk.LEFT)  
+
+    for i in range(14):
         frm_service.rowconfigure(i, weight=1, uniform='a')
-
+    for i in range(1):
+        frm_service.columnconfigure(i, weight=1, uniform='a')
+    
     lbl_data_to_encode = tk.Label(frm_service, text="Enter data to encode (9 numbers [0-15]):", bg="lightgray")  
     lbl_data_encoded = tk.Label(frm_service, text="Encoded data:", bg="lightgray")  
     
@@ -108,23 +112,30 @@ def ui_config(root):
 
     btn_data_copy_to_decode = tk.Button(frm_service, text="Copy to Decode", command=lambda: copy_result(ent_data_encoded,ent_data_to_decode))
 
-    lbl_data_to_encode.grid(column=0, row=0, sticky="ew", padx=5, pady=5)
-    ent_data_to_encode.grid(column=1, row=0, sticky="ew", padx=5, pady=5)
-    btn_data_encode.grid(column=2, row=0, sticky="ew", padx=5, pady=5)
-
-    lbl_data_encoded.grid(column=0, row=1, sticky="ew", padx=5, pady=5)
-    ent_data_encoded.grid(column=1, row=1, sticky="ew", padx=5, pady=5)
-    btn_data_copy_to_decode.grid(column=2, row=1, sticky="ew", padx=5, pady=5)
-
-    lbl_data_to_decode.grid(column=0, row=2, sticky="ew", padx=5, pady=5)
-    ent_data_to_decode.grid(column=1, row=2, sticky="ew", padx=5, pady=5)
-    btn_data_decode.grid(column=2, row=2, sticky="ew", padx=5, pady=5)
-
-    lbl_data_decoded.grid(column=0, row=3, sticky="ew", padx=5, pady=5)
-    ent_data_decoded.grid(column=1, row=3, sticky="ew", columnspan=2, padx=5, pady=5)
+    btn_instruction = tk.Button(frm_service, text="Instruction")
+    btn_clear_encode = tk.Button(frm_service, text="Clear data to encode")
+    btn_clear_decode = tk.Button(frm_service, text="Clear data to decode")
 
 
-    frm_console = tk.Frame(root, bg="black")
-    frm_console.pack(fill=tk.BOTH, expand=True, side="bottom")  
+    lbl_data_to_encode.grid(column=0, row=6, sticky="ew", padx=5, pady=5)
+    ent_data_to_encode.grid(column=0, row=7, sticky="ew", padx=5, pady=5)
+    btn_data_encode.grid(column=0, row=1, sticky="ew", padx=5, pady=5)
+
+    lbl_data_encoded.grid(column=0, row=8, sticky="ew", padx=5, pady=5)
+    ent_data_encoded.grid(column=0, row=9, sticky="ew", padx=5, pady=5)
+    btn_data_copy_to_decode.grid(column=0, row=3, sticky="ew", padx=5, pady=5)
+
+    lbl_data_to_decode.grid(column=0, row=10, sticky="ew", padx=5, pady=5)
+    ent_data_to_decode.grid(column=0, row=11, sticky="ew", padx=5, pady=5)
+    btn_data_decode.grid(column=0, row=2, sticky="ew", padx=5, pady=5)
+
+    lbl_data_decoded.grid(column=0, row=12, sticky="ew", padx=5, pady=5)
+    ent_data_decoded.grid(column=0, row=13, sticky="ew", padx=5, pady=5)
+
+    btn_instruction.grid(column=0, row=0, sticky="ew", padx=5, pady=5)
+    btn_clear_encode.grid(column=0, row=4, sticky="ew", padx=5, pady=5)
+    btn_clear_decode.grid(column=0, row=5, sticky="ew", padx=5, pady=5) 
+
     txt_console = tk.Text(frm_console, bg="black", fg="white")
     txt_console.pack(fill=tk.BOTH, expand=True)
+    
