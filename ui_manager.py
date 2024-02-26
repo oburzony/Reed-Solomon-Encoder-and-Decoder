@@ -1,5 +1,6 @@
 import tkinter as tk
 import encoder
+import decoder
 
 def validate_entry_encode(text):
     if not text:
@@ -49,7 +50,7 @@ def encode_data(ent_data_encoded, ent_data, txt_console):
         return
     
     data_to_encode_list = [int(x) for x in data_to_encode_list]
-    encoded_data = encoder.rs_encode(data_to_encode_list, txt_console) 
+    encoded_data = encoder.rs_encode(data_to_encode_list) 
     encoded_data_str = ', '.join(str(x) for x in encoded_data)
     
     txt_console.insert(tk.END, "\n>>> START ENCODING\n")
@@ -64,9 +65,32 @@ def encode_data(ent_data_encoded, ent_data, txt_console):
 
 def decode_data(ent_data_decoded, ent_data, txt_console):
     data_to_decode = ent_data.get()
+
+    if not data_to_decode:
+        txt_console.insert(tk.END, ">>> ERROR: Data to encode cannot be empty.\n")
+        return
+    
+    data_to_decode_list = data_to_decode.split(', ')  
+
+    if len(data_to_decode_list) != 15:
+        txt_console.insert(tk.END, ">>> ERROR: Data to encode must contain exactly 15 numbers separated by commas and space.\n")
+        return
+    
+    if not all(data.strip() for data in data_to_decode_list):
+        txt_console.insert(tk.END, ">>> ERROR: Each number in the data to encode must be non-empty.\n")
+        return
+    
+    data_to_decode_list = [int(x) for x in data_to_decode_list]
+    decoded_data = decoder.rs_decode(data_to_decode_list) 
+    decoded_data_str = ', '.join(str(x) for x in decoded_data)
+
+    txt_console.insert(tk.END, "\n>>> START DECODING\n")
+    txt_console.insert(tk.END, ">>> DATA TO DECODE:" + str(data_to_decode_list) + "\n")
+    txt_console.insert(tk.END, ">>> DECODED DATA:" + str(decoded_data) + "\n")
+
     ent_data_decoded.config(state="normal")  
     ent_data_decoded.delete(0, tk.END)     
-    ent_data_decoded.insert(0, data_to_decode)        
+    ent_data_decoded.insert(0, decoded_data_str)        
     ent_data_decoded.config(state="readonly") 
 
 def ui_config(root):

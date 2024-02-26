@@ -1,7 +1,7 @@
 from gf16_operations import generating_poly, gf16_poly_divide
 
 # Encoding function
-def rs_encode(data, txt_console):
+def rs_encode(data):
 
     # Splitting data into 9-element blocks
     block_size = 9
