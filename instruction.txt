@@ -1,0 +1,18 @@
+>>>INSTRUCTION
+
+   ENCODING
+   1. Enter 9 numbers from 0 to 15 (4 bits) in the field "Enter data to encode". After each entered number, press the space key.
+   2. After entering 9 numbers, press the "Encode" button. If there are any issues, the program will notify the user.
+
+   DECODING - SIMPLIFIED DECODER
+   !!! ATTENTION !!!
+   The full decoder is able to correct 3 arbitrary errors in the "data" polynomial. 
+   The implemented simplified decoder is not able to correct all double and triple errors. 
+   The effectiveness for double errors is 42.97% and for triple errors is 76.03%. 
+   This depends on the location and values of the errors. 
+   Sometimes, if too many errors are introduced, the data will be decoded as a completely different message.
+
+   1. Enter 15 numbers from 0 to 15 (4 bits) in the field "Enter data to decode". After each entered number, press the space key.
+   2. It is possible to copy the encoded data from the "Encoded data" field using the "Copy to decode" button.
+   3. Errors can be introduced in the data to be decoded.
+   4. After entering 15 numbers, press the "Decode" button. If there are any issues, the program will notify the user.

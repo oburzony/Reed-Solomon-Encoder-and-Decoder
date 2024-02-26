@@ -92,13 +92,21 @@ def decode_data(ent_data_decoded, ent_data, txt_console):
     ent_data_decoded.insert(0, decoded_data_str)        
     ent_data_decoded.config(state="readonly") 
 
+def write_instruction(txt_console):
+    try:
+        with open("instruction.txt", "r") as plik:
+            zawartosc = plik.read()
+            txt_console.insert(tk.END, zawartosc)
+    except FileNotFoundError:
+            print("Plik nie został znaleziony.")
+
 def clear_data(ent_data):
     ent_data.delete(0, tk.END)        
 
 def ui_config(root):
-    root.title("Reed-Solomon (15,9) encoder and \"simple\" decoder")
-    window_width = 800
-    window_height = 600
+    root.title("Reed-Solomon (15,9) encoder and simplified decoder")
+    window_width = 1280
+    window_height = 720
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
     center_x = int((screen_width - window_width)/2)
@@ -134,12 +142,12 @@ def ui_config(root):
     ent_data_encoded = tk.Entry(frm_service, state="readonly") 
     ent_data_decoded = tk.Entry(frm_service, state="readonly") 
 
-    btn_instruction = tk.Button(frm_service, text="Instruction")
+    btn_instruction = tk.Button(frm_service, text="Instruction", command=lambda: write_instruction(txt_console))
     btn_data_encode = tk.Button(frm_service, text="Encode", command=lambda: encode_data(ent_data_encoded, ent_data_to_encode, txt_console))
     btn_data_decode = tk.Button(frm_service, text="Decode", command=lambda: decode_data(ent_data_decoded, ent_data_to_decode, txt_console))
     btn_data_copy_to_decode = tk.Button(frm_service, text="Copy to Decode", command=lambda: copy_result(ent_data_encoded,ent_data_to_decode))
-    btn_clear_encode = tk.Button(frm_service, text="Clear data to encode", command=lambda:clear_data(ent_data_to_encode))
-    btn_clear_decode = tk.Button(frm_service, text="Clear data to decode", command=lambda:clear_data(ent_data_to_decode))
+    btn_clear_encode = tk.Button(frm_service, text="Clear data to encode", command=lambda: clear_data(ent_data_to_encode))
+    btn_clear_decode = tk.Button(frm_service, text="Clear data to decode", command=lambda: clear_data(ent_data_to_decode))
 
     btn_instruction.grid(column=0, row=0, sticky="ew", padx=5, pady=5)
     btn_data_encode.grid(column=0, row=1, sticky="ew", padx=5, pady=5)
