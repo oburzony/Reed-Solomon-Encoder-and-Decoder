@@ -103,7 +103,6 @@ def write_instruction(txt_console):
 def clear_data(ent_data):
     ent_data.delete(0, tk.END)        
 
-
 def ui_config(root):
     root.title("Reed-Solomon (15,9) encoder and simplified decoder")
     window_width = 1280
@@ -131,108 +130,55 @@ def ui_config(root):
     frm_service.rowconfigure(list(range(14)), weight=1, uniform='a') 
 
     # Labels
-    labels = [
-        "Enter data to encode (9 numbers [0-15]):",
-        "Encoded data:",
-        "Enter data to decode (15 numbers [0-15]):",
-        "Decoded data:"
-    ]
-    label_objects = []
+    label_widgets = [tk.Label(frm_service) for _ in range(4)]
+    lbl_data_to_encode, lbl_data_encoded, lbl_data_to_decode, lbl_data_decoded = label_widgets
 
-    for i, text in enumerate(labels):
-        label_name = f"label_{i}"
-        label_name = tk.Label(frm_service, text=text, bg="lightgray")
-        label_name.grid(row= 6 + 2 * i  , sticky="ew", padx=2, pady=(0, 0))
-        label_objects.append(label_name)
+    label_configs = [
+        (lbl_data_to_encode, "Enter data to encode (9 numbers [0-15]):"),
+        (lbl_data_encoded, "Encoded data:"),
+        (lbl_data_to_decode, "Enter data to decode (15 numbers [0-15]):"),
+        (lbl_data_decoded, "Decoded data:")
+    ]
+
+    for i, (label, text) in enumerate(label_configs):
+        label.config(text=text, bg="lightgray")
+        label.grid(row=6 + 2 * i, sticky="ew", padx=2, pady=(0, 0))
 
     # Entries
-    entries = [tk.Entry(frm_service, validate="key", validatecommand=(frm_service.register(validate_entry_encode), "%P")) for _ in range(3)]
-    entries[0].bind('<KeyPress-space>', lambda event: add_comma(event, entries[0]))
-    entries[1]["state"] = "readonly"
-    entries[2].bind('<KeyPress-space>', lambda event: add_comma(event, entries[2]))
-    entries[2]["state"] = "readonly"
+    entry_widegts = [tk.Entry(frm_service) for _ in range(4)]
+    ent_data_to_encode, ent_data_encoded, ent_data_to_decode, ent_data_decoded = entry_widegts
 
-    for i, entry in enumerate(entries):
+    entry_configs = [
+        (ent_data_to_encode, {"validate": "key", "validatecommand": (frm_service.register(validate_entry_encode), "%P")}),
+        (ent_data_encoded, {"state": "readonly"}),
+        (ent_data_to_decode, {"validate": "key", "validatecommand": (frm_service.register(validate_entry_decode), "%P")}),
+        (ent_data_decoded, {"state": "readonly"})
+    ]
+
+    for entry, config in entry_configs:
+        entry.config(**config)
+        if entry in (ent_data_to_encode, ent_data_to_decode):
+            entry.bind('<KeyPress-space>', lambda event, e=entry: add_comma(event, e))
+
+    for i, entry in enumerate(entry_widegts):
         entry.grid(row=6 + 2 * i + 1, sticky="ew", padx=2, pady=(0, 30))
+    
+    # Buttons 
+    button_widgets = [tk.Button(frm_service) for _ in range(6)]
+    btn_instruction, btn_data_encode, btn_data_decode, btn_data_copy_to_decode, btn_clear_encode, btn_clear_decode = button_widgets
 
-    # Buttons
-    button_texts = ["Instruction", "Encode", "Decode", "Copy to Decode", "Clear data to encode", "Clear data to decode"]
-    button_commands = [lambda: write_instruction(txt_console), lambda: encode_data(entries[1], entries[0], txt_console),
-                       lambda: decode_data(entries[2], entries[3], txt_console), lambda: copy_result(entries[1], entries[2]),
-                       lambda: clear_data(entries[0]), lambda: clear_data(entries[2])]
+    button_configs = [
+    (btn_instruction,"Instruction", lambda: write_instruction(txt_console)),
+    (btn_data_encode,"Encode", lambda: encode_data(ent_data_encoded,ent_data_to_encode, txt_console)),
+    (btn_data_decode,"Decode", lambda: decode_data(ent_data_decoded, ent_data_to_decode, txt_console)),
+    (btn_data_copy_to_decode,"Copy to Decode", lambda: copy_result(ent_data_encoded, ent_data_to_decode)),
+    (btn_clear_encode, "Clear data to encode", lambda: clear_data(ent_data_to_encode)),
+    (btn_clear_decode, "Clear data to decode", lambda: clear_data(ent_data_to_decode))
+    ]
 
-    for i, (text, command) in enumerate(zip(button_texts, button_commands)):
-        button = tk.Button(frm_service, text=text, command=lambda cmd=command: cmd(txt_console))
+    for i, (button,text, command) in enumerate(button_configs):
+        button.config(text=text, command=command)
         button.grid(row=i, sticky="nesw", padx=2, pady=2)
 
-      
-
-"""
-def ui_config(root):
-    root.title("Reed-Solomon (15,9) encoder and simplified decoder")
-    window_width = 1280
-    window_height = 720
-    screen_width = root.winfo_screenwidth()
-    screen_height = root.winfo_screenheight()
-    center_x = int((screen_width - window_width) / 2)
-    center_y = int((screen_height - window_height) / 2)
-    root.geometry(f"{window_width}x{window_height}+{center_x}+{center_y}")
-    root.resizable(True, True)
-
-    # Frames
-    frm_service = tk.Frame(root, bg="lightgray", bd=2, relief=tk.RAISED)
-    frm_console = tk.Frame(root, bg="black")
-
-    # Texts 
-    txt_console = tk.Text(frm_console, bg="black", fg="white")
-    txt_console.pack(fill=tk.BOTH, side=tk.TOP, expand=True)
-
-    # Pack Placement
-    frm_service.pack(fill=tk.Y, side=tk.LEFT)
-    frm_console.pack(fill=tk.BOTH, side=tk.LEFT, expand=True)
     
-    txt_console.pack(fill=tk.BOTH, side=tk.TOP, expand=True)
-
-    # Labels 
-    lbl_data_to_encode = tk.Label(frm_service, text="Enter data to encode (9 numbers [0-15]):", bg="lightgray")  
-    lbl_data_encoded = tk.Label(frm_service, text="Encoded data:", bg="lightgray")  
-    lbl_data_to_decode = tk.Label(frm_service, text="Enter data to decode (15 numbers [0-15]):", bg="lightgray")  
-    lbl_data_decoded = tk.Label(frm_service, text="Decoded data:", bg="lightgray")  
-
-    # Entries
-    ent_data_to_encode = tk.Entry(frm_service, validate="key", validatecommand=(frm_service.register(validate_entry_encode), "%P")) 
-    ent_data_to_decode = tk.Entry(frm_service, validate="key", validatecommand=(frm_service.register(validate_entry_decode), "%P"))  
-    ent_data_to_encode.bind('<KeyPress-space>', lambda event: add_comma(event, ent_data_to_encode))
-    ent_data_to_decode.bind('<KeyPress-space>', lambda event: add_comma(event, ent_data_to_decode))
-    ent_data_encoded = tk.Entry(frm_service, state="readonly") 
-    ent_data_decoded = tk.Entry(frm_service, state="readonly") 
-
-    # Buttons
-    btn_instruction = tk.Button(frm_service, text="Instruction", command=lambda: write_instruction(txt_console))
-    btn_data_encode = tk.Button(frm_service, text="Encode", command=lambda: encode_data(ent_data_encoded, ent_data_to_encode, txt_console))
-    btn_data_decode = tk.Button(frm_service, text="Decode", command=lambda: decode_data(ent_data_decoded, ent_data_to_decode, txt_console))
-    btn_data_copy_to_decode = tk.Button(frm_service, text="Copy to Decode", command=lambda: copy_result(ent_data_encoded, ent_data_to_decode))
-    btn_clear_encode = tk.Button(frm_service, text="Clear data to encode", command=lambda: clear_data(ent_data_to_encode))
-    btn_clear_decode = tk.Button(frm_service, text="Clear data to decode", command=lambda: clear_data(ent_data_to_decode))
-
-    # Grid Layout Configuration
-    frm_service.columnconfigure(0, weight=1, uniform='a')
-    frm_service.rowconfigure(list(range(14)), weight=1, uniform='a') 
-
-    # Grid Placement
-    lbl_data_to_encode.grid(row=6, sticky="ew", padx=2, pady=(0, 0))
-    ent_data_to_encode.grid(row=7, sticky="ew", padx=2, pady=(0, 30))  
-    lbl_data_encoded.grid(row=8, sticky="ew", padx=2, pady=(0, 0))    
-    ent_data_encoded.grid(row=9, sticky="ew", padx=2, pady=(0, 30))    
-    lbl_data_to_decode.grid(row=10, sticky="ew", padx=2, pady=(0, 0)) 
-    ent_data_to_decode.grid(row=11, sticky="ew", padx=2, pady=(0, 30))  
-    lbl_data_decoded.grid(row=12, sticky="ew", padx=2, pady=(0, 0))    
-    ent_data_decoded.grid(row=13, sticky="ew", padx=2, pady=(0, 30))     
-
-    btn_instruction.grid(row=0, sticky="nesw", padx=2, pady=2)
-    btn_data_encode.grid(row=1, sticky="nesw", padx=2, pady=2)
-    btn_data_decode.grid(row=2, sticky="nesw",padx=2, pady=2)
-    btn_data_copy_to_decode.grid(row=3, sticky="nesw", padx=2, pady=2)
-    btn_clear_encode.grid(row=4, sticky="nesw", padx=2, pady=2)
-    btn_clear_decode.grid(row=5, sticky="nesw", padx=2, pady=2)
-"""
+      
