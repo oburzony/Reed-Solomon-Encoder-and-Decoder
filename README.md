@@ -1,7 +1,7 @@
 # Reed-Solomon Encoder/Decoder
 Welcome to the Reed-Solomon encoder and decoder project repository!
 
-<img width="1280" alt="image" src="Rerad-image\image-program.png">
+<img width="1200" alt="image" src="Rerad-image\image-program.png">
 
 ## Description
 This project provides an implementation of the Reed-Solomon (15,9) code encoder and decoder. The Reed-Solomon code is capable of encoding and decoding input data, with a codeword size of 15 units, where 9 units represent the input data. Each unit consists of 4 bits and serves as a coefficient of the polynomial. The program operates on a Galois field of size 2^4 (16 elements) and has an error correction capability of detecting and correcting up to 3 errors in data transmission.
